@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using EventBuss;
+using UnityEngine;
 
 namespace StatePattern
 {
@@ -11,7 +13,9 @@ namespace StatePattern
     {
         public float maxSpeed = 2f;
         public float turnDistance = 2f;
-    
+
+        private string _status;
+        
         public float CurrentSpeed { get; set; }
     
         public Direction CurrentTurnDirection {
@@ -21,6 +25,18 @@ namespace StatePattern
         private IBikeState _startState, _stopState, _turnState;
 
         private BikeStateContext _bikeStateContext;
+
+        private void OnEnable()
+        {
+            RaceEventBuss.Subscribe(RaceEventType.Start,StartBike);
+            RaceEventBuss.Subscribe(RaceEventType.Stop,StopBike);
+        }
+
+        private void OnDisable()
+        {
+            RaceEventBuss.UnSubscribe(RaceEventType.Start,StartBike);
+            RaceEventBuss.UnSubscribe(RaceEventType.Stop,StopBike);
+        }
 
         private void Start()
         {
@@ -34,11 +50,13 @@ namespace StatePattern
 
         public void StartBike()
         {
+            _status = "Started";
             _bikeStateContext.Transition(_startState);
         }
 
         public void StopBike()
         {
+            _status = "Stopped";
             _bikeStateContext.Transition(_stopState);
         }
 
@@ -48,8 +66,10 @@ namespace StatePattern
             _bikeStateContext.Transition(_turnState);
         }
 
-
-
-
+        private void OnGUI()
+        {
+            GUI.color = Color.green;
+            GUI.Label(new Rect(10,60,200,20), "BIKE STATUS: " + _status);
+        }
     }
 }
