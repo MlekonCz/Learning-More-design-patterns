@@ -71,5 +71,10 @@ namespace StatePattern
             GUI.color = Color.green;
             GUI.Label(new Rect(10,60,200,20), "BIKE STATUS: " + _status);
         }
+
+        public void ToggleTurbo()
+        {
+            
+        }
     }
 }
